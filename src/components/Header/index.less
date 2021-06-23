@@ -1,0 +1,48 @@
+.main-header{
+
+ background-color: white;
+ text-align: right;
+ height: 100px;
+ .logOut{
+  padding: 0 20px;
+  border-bottom: 2px solid rgb(94, 235, 190);
+  height: 50px;
+  line-height: 50px;
+  span{
+   color: red;
+   cursor: pointer;
+   text-decoration: underline;
+  }
+ }
+ .header-bottom{
+  padding: 0 20px;
+  display: flex;
+  height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  .header-bottom-left{
+   position: relative; 
+   width: 25%; 
+   font-size: 20px; 
+   text-align: center;
+   &::after { 
+    content: ''; 
+    width: 5px;
+    height: 5px;
+    position: absolute; 
+    top: 40px; 
+    right: 50%; 
+    transform: translateX(50%); 
+    border-top: 20px solid white; 
+    border-right: 20px solid transparent; 
+    border-bottom: 20px solid transparent; 
+    border-left: 20px solid transparent; 
+   }
+  }
+  .header-bottom-right{
+   display: flex;
+   width: 25%;
+   justify-content: space-around;
+  }
+ }
+}
