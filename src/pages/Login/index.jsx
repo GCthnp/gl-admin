@@ -67,7 +67,7 @@ function Login(props) {
   <div className="login">
    <div className="login-header">
     <img src={logo} alt="logo" />
-    <span>React 后台管理系统</span>
+    <span>后台管理系统</span>
    </div>
    <div className="login-main">
     <h2>用户登录</h2>

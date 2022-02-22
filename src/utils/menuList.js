@@ -3,13 +3,20 @@ import {
  HomeOutlined,
  AreaChartOutlined,
  UserOutlined,
+ ShoppingOutlined,
+ LineChartOutlined,
+ BarChartOutlined,
+ PieChartOutlined,
+ BarsOutlined,
+ SafetyCertificateOutlined
 } from '@ant-design/icons';
 
 const menuList = [
  {
   title: '首页',
   icon: <HomeOutlined />,
-  key: '/home'
+  key: '/home',
+  isPublic: true
  },
  {
   title: '商品',
@@ -18,12 +25,12 @@ const menuList = [
   children: [
    {
     title: '品类管理',
-    icon: <HomeOutlined />,
+    icon: <BarsOutlined />,
     key: '/category'
    },
    {
     title: '商品管理',
-    icon: <HomeOutlined />,
+    icon: <ShoppingOutlined />,
     key: '/product'
    },
   ]
@@ -35,7 +42,7 @@ const menuList = [
  },
  {
   title: '角色管理',
-  icon: < UserOutlined />,
+  icon: <SafetyCertificateOutlined />,
   key: '/role'
  },
  {
@@ -45,17 +52,17 @@ const menuList = [
   children: [
    {
     title: '柱形图',
-    icon: <AreaChartOutlined />,
+    icon: <BarChartOutlined />,
     key: '/charts/bar'
    },
    {
     title: '折线图',
-    icon: <AreaChartOutlined />,
+    icon: <LineChartOutlined />,
     key: '/charts/line'
    },
    {
     title: '饼图',
-    icon: <AreaChartOutlined />,
+    icon: <PieChartOutlined />,
     key: '/charts/pie'
    },
   ]

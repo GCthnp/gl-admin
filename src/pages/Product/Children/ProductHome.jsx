@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { reqProduct, reqSearch } from "../../../api"
+import { reqProduct, reqSearch, reqStatus, reqDeleteProduct } from "../../../api"
 
 import {
   Card,
@@ -8,7 +8,9 @@ import {
   Select,
   Input,
   Button,
-  Space
+  Space,
+  message,
+  Modal
 } from "antd"
 import { PlusOutlined } from '@ant-design/icons';
 const { Option } = Select;
@@ -21,20 +23,19 @@ const tablePage = {
   current: 1
 }
 
-
-
-
 function ProductHome(props) {
   const [products, setProducts] = useState([])//商品列表
+  const [pageNum, setPageNum] = useState()
   const [loading, setLoading] = useState(false)
   const [searchName, setSearchName] = useState('')
   const [searchType, setSearchType] = useState('productName')
   // 获取商品列表
   const getProducts = async (pageNum) => {
+    setPageNum(pageNum)
     tablePage.current = pageNum
     let result;
-    setLoading(true)
     if (searchName) {
+      setLoading(true)
       result = await reqSearch({
         pageNum,
         pageSize: tablePage.pageSize,
@@ -50,9 +51,34 @@ function ProductHome(props) {
       setProducts(result.data.list)
     }
   }
+  const changeStatus = async (_id, status) => {
+    const res = await reqStatus(_id, status)
+    if (res.status === 0) {
+      message.success("更新成功")
+      getProducts(pageNum)
+    }
+  }
 
+  // 删除商品
+  const deleteProduct = async (productId) =>{
+    
+    
+    Modal.confirm({
+      title: '确认删除该商品吗？',
+      onOk: async () => {
+        const res = await reqDeleteProduct({productId})
+        if (res.status === 0) {
+          message.success("删除商品成功")
+          getProducts(pageNum)
+        } else {
+          message.error(res.msg)
+        }
+      }
+    }) 
+  }
   useEffect(() => {
     getProducts(1)
+    // eslint-disable-next-line
   }, [])
 
   // 卡片标题 搜索
@@ -90,28 +116,56 @@ function ProductHome(props) {
     },
     {
       title: '状态',
-      dataIndex: 'status',
-      render: (status) => (
-        <span>
-          <div><Button type="primary" size="small">下架</Button></div>
-          <div>在售{status}</div>
-        </span>
-      ),
+      // dataIndex: 'status',
+      render: (product) => {
+        const { status, _id } = product
+        return (
+          <span>
+            <div><Button
+              onClick={() => {
+                changeStatus(_id, status === 1 ? 2 : 1)
+              }}
+              type="primary"
+              size="small"
+            >{product.status === 1 ? "下架" : "上架"}</Button></div>
+            <div>{product.status === 1 ? "在售" : "已下架"}</div>
+          </span >
+        )
+      },
     },
     {
       title: '操作',
       render: (product) => (
         <Space size="small">
-          <Button onClick={()=>{props.history.push('/product/pdetail',{product})}} type="primary" size="small">详情</Button>
-          <Button type="primary" size="small">修改</Button>
+          <Button onClick={() => {
+            props.history.push('/product/pdetail', { product })
+          }}
+            type="primary"
+            size="small">详情</Button>
+          <Button
+            onClick={() => {
+              props.history.push('/product/addproduct', { product })
+            }}
+            type="primary" size="small">修改</Button>
+          <Button
+            onClick={()=>{
+              deleteProduct(product._id)
+            }}
+            type="primary" danger size="small">删除</Button>
         </Space>
       ),
     }
   ];
-    
+
   return (
     <div>
-      <Card title={title} extra={<Button icon={<PlusOutlined />} type="primary">添加商品</Button>} style={{ width: '100%' }}>
+      <Card title={title} extra={
+        <Button
+          onClick={() => { props.history.push("/product/addproduct") }}
+          icon={<PlusOutlined />}
+          type="primary">添加商品
+        </Button>
+      } style={{ width: '100%' }}>
         <Table
 
           rowKey="_id"

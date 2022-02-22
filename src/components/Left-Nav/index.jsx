@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 
 import "./index.less"
 import menuList from "../../utils/menuList"
+import memoryUtils from "../../utils/memoryUtils"
 
 import { Menu } from "antd"
 
@@ -33,15 +34,21 @@ function LeftNav(props) {
   let nowPath = props.nowPath
   // 对menu的 selectedKeys 进行判断
   const getPath = (nowPath) => {
-    const newPath = nowPath.slice(1)
-    if (newPath.indexOf("/") === -1) return
-    const i = newPath.indexOf("/")
-    nowPath = "/" + newPath.slice(0, i)
-    setSelectItem(nowPath)
+
+    if (nowPath.indexOf("/charts/") !== -1) {
+      setSelectItem([nowPath])
+    } else {
+      const newPath = nowPath.slice(1)
+      if (newPath.indexOf("/") === -1) return
+      const i = newPath.indexOf("/")
+      nowPath = "/" + newPath.slice(0, i)
+      setSelectItem([nowPath])
+    }
   }
 
   useEffect(() => {
     getPath(nowPath)
+    // eslint-disable-next-line
   }, [])
 
 
@@ -51,44 +58,74 @@ function LeftNav(props) {
   // 默认打开的submenu
   function openkey(nowPath) {
     let openkeyValue = ''
+
     if (nowPath === "/category" || nowPath === "/product" || nowPath.indexOf("/product/") !== -1) {
       openkeyValue = "/appstore"
     } else if (nowPath.indexOf("/charts/") !== -1) {
       openkeyValue = "/charts"
+      console.log(nowPath.indexOf("/charts/"));
     } else {
       return nowPath
     }
+    console.log(openkeyValue);
     return openkeyValue
+  }
+
+  const hasAuth = (item) => {
+    const { key, isPublic } = item
+    const menus = memoryUtils.user.role.menus
+    const username = memoryUtils.user.username
+
+    if (username === "admin" || isPublic || menus.indexOf(key) !== -1) {
+      return true
+    } else if (item.children) {
+      return !!(item.children.find(child => menus.indexOf(child.key) !== -1))
+    }
+
+
+    return false
   }
 
   // 使用map+递归
   const getMenuList = (menuList) => {
+    // eslint-disable-next-line
     return menuList.map(item => {
-      if (!item.children) {
-        return (<Menu.Item key={item.key} icon={item.icon}><Link to={item.key}>{item.title}</Link></Menu.Item>)
-      } else {
-        return (
-          <SubMenu key={item.key} icon={item.icon} title={item.title}>
-            {
-              getMenuList(item.children)
-            }
-          </SubMenu>)
+      if (hasAuth(item)) {
+        if (!item.children) {
+          return (
+            <Menu.Item key={item.key} icon={item.icon}>
+              <Link to={item.key}>{item.title}</Link>
+            </Menu.Item>)
+        } else {
+          return (
+            <SubMenu key={item.key} icon={item.icon} title={item.title}>
+              {
+                getMenuList(item.children)
+              }
+            </SubMenu>)
+        }
       }
     })
   }
 
   return (
     <div className="leftnav">
-      <div className="logo" >后台管理</div>
-
+      {
+        // console.log(showTitle)
+      
+      }
+      <div className="logo" ></div>
       <Menu
-        onSelect={(item) => { setSelectItem(item.key) }}
-        selectedKeys={selectItem}
+
+        onSelect={(item) => {
+          setSelectItem([item.key]); console.log(item, selectItem);
+        }}
+        selectedKeys={selectItem[0] === "/admin" ? ["/home"] : selectItem}
         defaultOpenKeys={[openkey(nowPath)]}
         theme="dark"
-        // selectedKeys={[nowPath]}
-        defaultSelectedKeys={['/home']}
-        mode="inline">
+        mode="inline"
+        
+      >
         {/* 第一种方法 */}
         {/* {
      menuList.map(item => {

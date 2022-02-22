@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import Login from "./pages/Login"
 import Admin from "./pages/Admin"
+import ShopHome from "./pages/ShopHome"
 
 
 function App() {
@@ -10,7 +11,8 @@ function App() {
     <BrowserRouter>
       <Switch> 
         <Route exact path="/login" component={Login} />
-        <Route exact path="/admin" component={Admin} />
+        <Route path="/shophome" component={ShopHome}></Route>
+        <Route exact path="/" component={Admin} />
         <Route path='/' component={Admin}/>
         {/* <Route exact path="/" component={Login} /> */}
       </Switch>
